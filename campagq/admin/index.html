@@ -70,13 +70,25 @@
     </div>
 
     <script>
-        function fakeLogin(event) {
-            event.preventDefault();
-            document.getElementById("message").innerText =
-                "Login submitted (not connected to anything yet).";
-            return false;
+    function fakeLogin(event) {
+        event.preventDefault();
+
+        const username = document.querySelector('input[type="text"]').value;
+        const password = document.querySelector('input[type="password"]').value;
+        const message = document.getElementById("message");
+
+        if (username === "agqlodge" && password === "Camping2023!") {
+            message.style.color = "green";
+            message.innerText = "Logged in!";
+        } else {
+            message.style.color = "red";
+            message.innerText = "Invalid credentials.";
         }
-    </script>
+
+        return false;
+    }
+</script>
+
 
 </body>
 </html>
