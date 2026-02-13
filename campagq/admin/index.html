@@ -15,8 +15,8 @@
     #message { text-align:center; color:gray; margin-top:10px; }
     #uploadUI { display:none; }
     #uploadedFile { margin-top:15px; text-align:center; }
-    #uploadedFile img { max-width:100%; border-radius:4px; }
-    #uploadedFile a { display:block; margin-top:5px; color:#007BFF; text-decoration:none; }
+    #uploadedFile img, #uploadedFile iframe { max-width:100%; border-radius:4px; }
+    #uploadedFile iframe { height:400px; border:1px solid #ccc; }
   </style>
 </head>
 <body>
@@ -124,19 +124,20 @@
       });
   }
 
-  // --- Display a file ---
+  // --- Display a file inline ---
   function displayFile(filename) {
     const uploadedDiv = document.getElementById("uploadedFile");
     const fileRef = storage.ref('uploads/' + filename);
 
     fileRef.getDownloadURL()
       .then(url => {
-        // Check file type to display image or link
         const lower = filename.toLowerCase();
         if (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg') || lower.endsWith('.gif')) {
           uploadedDiv.innerHTML = `<img src="${url}" alt="Uploaded file">`;
+        } else if (lower.endsWith('.pdf') || lower.endsWith('.txt')) {
+          uploadedDiv.innerHTML = `<iframe src="${url}"></iframe>`;
         } else {
-          uploadedDiv.innerHTML = `<a href="${url}" target="_blank">Download ${filename}</a>`;
+          uploadedDiv.innerHTML = `<p><a href="${url}" target="_blank">View ${filename}</a></p>`;
         }
       })
       .catch(err => {
@@ -149,8 +150,8 @@
   function displayMostRecentFile() {
     const listRef = storage.ref('uploads/');
 
-    // List files and take the last one
-    listRef.list({ maxResults: 1 }) // list most recent file (alphabetically, workaround)
+    // List files (Firebase lists alphabetically)
+    listRef.list({ maxResults: 1 })
       .then(res => {
         if (res.items.length > 0) {
           const latestFile = res.items[res.items.length - 1].name;
