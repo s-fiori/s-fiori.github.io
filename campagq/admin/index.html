@@ -141,7 +141,7 @@
   // --- Display CSV from Firebase ---
   function displayCSV(filename) {
     const displayDiv = document.getElementById("csvDisplay");
-    const fileRef = storage.ref('csv/' + filename);
+    const fileRef = storage.ref(filename);
     fileRef.getDownloadURL()
       .then(url => fetch(url))
       .then(res => res.text())
