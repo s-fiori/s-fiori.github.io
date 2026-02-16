@@ -332,7 +332,7 @@ async function fetchChangelogAndLastUpdate() {
             const lastCommit = validCommits[0].commit;
             const lastDate = new Date(lastCommit.author.date);
             document.getElementById("mostRecentUpdate").innerHTML =
-                `<strong>Most recent update:</strong><br>${lastDate.toLocaleDateString()} – ${lastDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} | ${lastCommit.message}`;
+                `<strong>Most recent update:</strong><br>${lastDate.toLocaleDateString()} – ${lastDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} | ${lastCommit.message.split('\n')[0].trim()}`;
         }
 
         const changelogDiv = document.getElementById("changelog");
@@ -342,7 +342,7 @@ async function fetchChangelogAndLastUpdate() {
             const commit = commitData.commit;
             const commitDate = new Date(commit.author.date);
             const div = document.createElement("div");
-            div.innerText = `${commitDate.toLocaleDateString()} ${commitDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}: ${commit.message}`;
+            div.innerText = `${commitDate.toLocaleDateString()} ${commitDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}: ${commit.message.split('\n')[0].trim()}`;
             changelogDiv.appendChild(div);
         });
 
