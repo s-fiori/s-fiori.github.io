@@ -181,8 +181,6 @@ pdfFiles.forEach(file => displayPDF(file));
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
 const filePath = "campagq/programming/";
-
-// Max commits to fetch
 const maxCommits = 30;
 
 async function fetchChangelogAndLastUpdate() {
@@ -201,18 +199,8 @@ async function fetchChangelogAndLastUpdate() {
             return;
         }
 
-        // Filter out web commits (noreply emails)
-        const desktopCommits = data.filter(c => !c.commit.author.email.includes("@users.noreply.github.com"));
-        if (!desktopCommits.length) {
-            document.getElementById("mostRecentUpdate").innerText =
-                "Most recent update: No desktop commits found.";
-            document.getElementById("changelog").innerText =
-                "Changelog unavailable.";
-            return;
-        }
-
         // Most recent update (top center)
-        const lastCommit = desktopCommits[0].commit;
+        const lastCommit = data[0].commit;
         const lastDate = new Date(lastCommit.author.date);
         const formattedDate = lastDate.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
         const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
@@ -223,7 +211,8 @@ async function fetchChangelogAndLastUpdate() {
         const changelogDiv = document.getElementById("changelog");
         changelogDiv.innerHTML = ""; // clear
 
-        desktopCommits.reverse().forEach(commitData => {
+        // Reverse chronological: newest at bottom, scroll starts at bottom
+        data.reverse().forEach(commitData => {
             const commit = commitData.commit;
             const commitDate = new Date(commit.author.date);
             const div = document.createElement("div");
