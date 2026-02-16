@@ -102,7 +102,7 @@
 <div class="box">
     <h1>2026 AGQ Programming</h1>
 
-    <!-- Most recent commit display -->
+    <!-- Most recent commit -->
     <div class="most-recent-update" id="mostRecentUpdate">
         Loading most recent update...
     </div>
@@ -179,14 +179,13 @@ pdfFiles.forEach(file => displayPDF(file));
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
 const filePath = "campagq/programming/";
-const maxCommits = 30;
 
 async function fetchChangelogAndLastUpdate() {
     try {
+        // Fetch last 30 commits on main branch
         const response = await fetch(
-            `https://api.github.com/repos/${owner}/${repo}/commits?path=${filePath}&sha=main&per_page=${maxCommits}`
+            `https://api.github.com/repos/${owner}/${repo}/commits?sha=main&per_page=30`
         );
-
         const data = await response.json();
 
         if (!data || !data.length) {
@@ -197,19 +196,21 @@ async function fetchChangelogAndLastUpdate() {
             return;
         }
 
-        // Most recent update (top center)
+        // Most recent update (top)
         const lastCommit = data[0].commit;
         const lastDate = new Date(lastCommit.author.date);
         const formattedDate = lastDate.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
         const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-        document.getElementById("mostRecentUpdate").innerText =
-            `Most recent update:\n${formattedDate} – ${formattedTime} | ${lastCommit.message}`;
+        document.getElementById("mostRecentUpdate").innerHTML =
+            `Most recent update:<br>${formattedDate} – ${formattedTime} | ${lastCommit.message}`;
 
-        // Mini changelog at bottom (scrollable, newest at bottom)
+        // Mini changelog (bottom)
         const changelogDiv = document.getElementById("changelog");
-        changelogDiv.innerHTML = "";
+        changelogDiv.innerHTML = ""; // clear
+        changelogDiv.style.maxHeight = "100px";
+        changelogDiv.style.overflowY = "auto";
 
-        // Reverse data so newest commit is at the bottom
+        // Show all commits up to 30 (reverse so newest is at bottom)
         data.reverse().forEach(commitData => {
             const commit = commitData.commit;
             const commitDate = new Date(commit.author.date);
@@ -218,7 +219,7 @@ async function fetchChangelogAndLastUpdate() {
             changelogDiv.appendChild(div);
         });
 
-        // Scroll to bottom so newest commit is visible
+        // Scroll to bottom to show newest commit
         changelogDiv.scrollTop = changelogDiv.scrollHeight;
 
     } catch (error) {
