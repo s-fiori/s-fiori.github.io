@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>AGQ Programming</title>
 
+    <!-- PDF.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
     <style>
         * { box-sizing: border-box; }
 
@@ -59,11 +62,12 @@
             margin-top: 20px;
         }
 
-        iframe {
+        #pdfDisplay canvas {
+            display: block;
+            margin: 15px auto;
             width: 100%;
-            height: 600px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            height: auto;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
         .last-updated {
@@ -95,7 +99,7 @@
     </div>
 
     <div class="pdf-container">
-        <iframe src="/campagq/programming/aa.pdf"></iframe>
+        <div id="pdfDisplay"></div>
     </div>
 
     <div class="last-updated" id="lastUpdated">
@@ -106,49 +110,88 @@
 </div>
 
 <script>
-    const owner = "s-fiori";
-    const repo = "s-fiori.github.io";
-    const filePath = "programming/aa.pdf";
+/* -----------------------------
+   PDF DISPLAY (Admin Style)
+------------------------------ */
 
-    async function fetchLastUpdate() {
-        try {
-            const response = await fetch(
-                `https://api.github.com/repos/${owner}/${repo}/commits?path=${filePath}&per_page=1`
-            );
+const currentPDF = "/campagq/programming/aa.pdf";
 
-            const data = await response.json();
+function displayPDF() {
+    const container = document.getElementById("pdfDisplay");
+    container.innerHTML = "";
 
-            if (!data || !data.length) {
-                document.getElementById("lastUpdated").innerText =
-                    "Last updated: Unable to retrieve update info.";
-                return;
-            }
+    const loadingTask = pdfjsLib.getDocument(currentPDF);
 
-            const commit = data[0].commit;
-            const date = new Date(commit.author.date);
-            const message = commit.message;
+    loadingTask.promise.then(pdf => {
+        for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+            pdf.getPage(pageNum).then(page => {
+                const viewport = page.getViewport({ scale: 1.5 });
+                const canvas = document.createElement("canvas");
+                const context = canvas.getContext("2d");
 
-            const formattedDate = date.toLocaleDateString(undefined, {
-                year: "numeric",
-                month: "long",
-                day: "numeric"
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                container.appendChild(canvas);
+                page.render({ canvasContext: context, viewport: viewport });
             });
+        }
+    }).catch(err => {
+        console.error(err);
+        container.innerHTML = "<p>Unable to display PDF.</p>";
+    });
+}
 
-            const formattedTime = date.toLocaleTimeString(undefined, {
-                hour: "numeric",
-                minute: "2-digit"
-            });
+displayPDF();
 
-            document.getElementById("lastUpdated").innerText =
-                `Last updated: ${formattedDate} – ${formattedTime} | ${message}`;
 
-        } catch (error) {
+/* -----------------------------
+   GITHUB LAST UPDATED
+------------------------------ */
+
+const owner = "s-fiori";
+const repo = "s-fiori.github.io";
+const filePath = "campagq/programming/aa.pdf";
+
+async function fetchLastUpdate() {
+    try {
+        const response = await fetch(
+            `https://api.github.com/repos/${owner}/${repo}/commits?path=${filePath}&per_page=1`
+        );
+
+        const data = await response.json();
+
+        if (!data || !data.length) {
             document.getElementById("lastUpdated").innerText =
                 "Last updated: Unable to retrieve update info.";
+            return;
         }
-    }
 
-    fetchLastUpdate();
+        const commit = data[0].commit;
+        const date = new Date(commit.author.date);
+        const message = commit.message;
+
+        const formattedDate = date.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "long",
+            day: "numeric"
+        });
+
+        const formattedTime = date.toLocaleTimeString(undefined, {
+            hour: "numeric",
+            minute: "2-digit"
+        });
+
+        document.getElementById("lastUpdated").innerText =
+            `Last updated: ${formattedDate} – ${formattedTime} | ${message}`;
+
+    } catch (error) {
+        document.getElementById("lastUpdated").innerText =
+            "Last updated: Unable to retrieve update info.";
+    }
+}
+
+fetchLastUpdate();
 </script>
 
 </body>
