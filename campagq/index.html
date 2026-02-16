@@ -34,6 +34,22 @@
             font-size: 32px;
         }
 
+        .top-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .top-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            font-weight: bold;
+            color: black;
+        }
+
+        .top-links a:hover {
+            text-decoration: underline;
+        }
+
         .most-recent-update {
             text-align: center;
             font-size: 16px;
@@ -73,6 +89,27 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
+        /* NEW: Staff info boxes */
+        .staff-info {
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-box {
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        .info-box strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
         #changelog {
             max-height: 100px;
             overflow-y: auto;
@@ -102,13 +139,18 @@
 <div class="box">
     <h1>2026 AGQ Programming</h1>
 
-    <!-- Most recent commit -->
+    <!-- NEW LINKS -->
+    <div class="top-links">
+        <a href="https://www.google.com" target="_blank">Link One</a>
+        <a href="https://www.google.com" target="_blank">Link Two</a>
+    </div>
+
     <div class="most-recent-update" id="mostRecentUpdate">
         Loading most recent update...
     </div>
 
     <div class="search-container">
-        <input type="text" placeholder="Search staff by name...">
+        <input type="text" id="searchInput" placeholder="Search staff by name...">
     </div>
 
     <div class="pdf-container" id="pdfContainer">
@@ -117,7 +159,6 @@
 
     <div class="divider"></div>
 
-    <!-- Scrollable changelog -->
     <div id="changelog">
         Loading full changelog...
     </div>
@@ -127,7 +168,6 @@
 /* -----------------------------
    PDF DISPLAY WITH CACHE-BUSTING
 ------------------------------ */
-// Updated PDF order
 const pdfFiles = [
     "Programming - AA.pdf",
     "Programming - Time Off.pdf",
@@ -143,7 +183,6 @@ function displayPDF(fileName) {
     const displayDiv = document.createElement("div");
     displayDiv.className = "pdf-display";
 
-    // Cache-busting query string
     const cacheBuster = "?t=" + new Date().getTime();
     const pdfPath = pdfDirectory + encodeURIComponent(fileName) + cacheBuster;
 
@@ -162,7 +201,6 @@ function displayPDF(fileName) {
             });
         }
     }).catch(err => {
-        console.error(`Error loading ${fileName}:`, err);
         const errorMsg = document.createElement("div");
         errorMsg.className = "error-message";
         errorMsg.innerText = `Unable to display ${fileName}.`;
@@ -175,11 +213,49 @@ function displayPDF(fileName) {
 pdfFiles.forEach(file => displayPDF(file));
 
 /* -----------------------------
+   SEARCH FUNCTIONALITY
+------------------------------ */
+document.getElementById("searchInput").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+
+        // Clear PDFs
+        pdfContainer.innerHTML = "";
+
+        // Create static staff info layout
+        const staffDiv = document.createElement("div");
+        staffDiv.className = "staff-info";
+
+        const fields = [
+            "Name",
+            "1st Hour",
+            "2nd Hour",
+            "3rd Hour",
+            "4th Hour",
+            "Toof",
+            "Noff",
+            "Cabin",
+            "Post Assignments",
+            "Days Out",
+            "Notes"
+        ];
+
+        fields.forEach(field => {
+            const box = document.createElement("div");
+            box.className = "info-box";
+            box.innerHTML = `<strong>${field}</strong> Placeholder`;
+            staffDiv.appendChild(box);
+        });
+
+        pdfContainer.appendChild(staffDiv);
+    }
+});
+
+/* -----------------------------
    GITHUB LAST UPDATED & CHANGELOG
 ------------------------------ */
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
-const filePath = "campagq/programming/";
 
 async function fetchChangelogAndLastUpdate() {
     try {
@@ -196,13 +272,11 @@ async function fetchChangelogAndLastUpdate() {
             return;
         }
 
-        // Filter out merge commits and [IGNORE] commits
         const validCommits = data.filter(commitData => {
             const message = commitData.commit.message;
             return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]");
         });
 
-        // Most recent update (top)
         if (validCommits.length > 0) {
             const lastCommit = validCommits[0].commit;
             const lastDate = new Date(lastCommit.author.date);
@@ -210,18 +284,11 @@ async function fetchChangelogAndLastUpdate() {
             const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
             document.getElementById("mostRecentUpdate").innerHTML =
                 `<strong>Most recent update:</strong><br>${formattedDate} – ${formattedTime} | ${lastCommit.message.split('\n')[0]}`;
-        } else {
-            document.getElementById("mostRecentUpdate").innerText =
-                "Most recent update: No valid commits found.";
         }
 
-        // Mini changelog (bottom)
         const changelogDiv = document.getElementById("changelog");
-        changelogDiv.innerHTML = ""; // clear
-        changelogDiv.style.maxHeight = "100px";
-        changelogDiv.style.overflowY = "auto";
+        changelogDiv.innerHTML = "";
 
-        // Show all commits up to 100 (reverse so newest is at bottom)
         validCommits.reverse().forEach(commitData => {
             const commit = commitData.commit;
             const commitDate = new Date(commit.author.date);
@@ -230,7 +297,6 @@ async function fetchChangelogAndLastUpdate() {
             changelogDiv.appendChild(div);
         });
 
-        // Scroll to bottom to show newest commit
         changelogDiv.scrollTop = changelogDiv.scrollHeight;
 
     } catch (error) {
@@ -238,7 +304,6 @@ async function fetchChangelogAndLastUpdate() {
             "Most recent update: Unable to retrieve update info.";
         document.getElementById("changelog").innerText =
             "Changelog unavailable.";
-        console.error(error);
     }
 }
 
