@@ -129,11 +129,11 @@
 ------------------------------ */
 // Updated PDF order
 const pdfFiles = [
-    "aa.pdf",
-    "time-off.pdf",
-    "post.pdf",
-    "in-out.pdf",
-    "cabins.pdf"
+    "Programming - AA.pdf",
+    "Programming - Time Off.pdf",
+    "Programming - Post.pdf",
+    "Programming - In-Out.pdf",
+    "Programming - Cabins.pdf"
 ];
 
 const pdfDirectory = "/campagq/programming/";
@@ -145,7 +145,7 @@ function displayPDF(fileName) {
 
     // Cache-busting query string
     const cacheBuster = "?t=" + new Date().getTime();
-    const pdfPath = pdfDirectory + fileName + cacheBuster;
+    const pdfPath = pdfDirectory + encodeURIComponent(fileName) + cacheBuster;
 
     const loadingTask = pdfjsLib.getDocument(pdfPath);
 
@@ -209,7 +209,7 @@ async function fetchChangelogAndLastUpdate() {
             const formattedDate = lastDate.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
             const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
             document.getElementById("mostRecentUpdate").innerHTML =
-                `Most recent update:<br>${formattedDate} – ${formattedTime} | ${lastCommit.message.split('\n')[0]}`;
+                `<strong>Most recent update:</strong><br>${formattedDate} – ${formattedTime} | ${lastCommit.message.split('\n')[0]}`;
         } else {
             document.getElementById("mostRecentUpdate").innerText =
                 "Most recent update: No valid commits found.";
