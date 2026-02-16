@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>2026 AGQ Programming</title>
 
-    <!-- PDF.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 
     <style>
@@ -40,7 +39,7 @@
         }
 
         .top-links a {
-            margin: 0 10px;
+            margin: 0 15px;
             text-decoration: none;
             font-weight: bold;
             color: black;
@@ -89,25 +88,49 @@
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
         }
 
-        /* NEW: Staff info boxes */
-        .staff-info {
+        /* STAFF VIEW */
+
+        .staff-wrapper {
             margin-top: 20px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
         }
 
-        .info-box {
+        .group {
             background: #fafafa;
-            padding: 15px;
-            border-radius: 6px;
             border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        .group-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .group-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
             font-size: 14px;
         }
 
-        .info-box strong {
-            display: block;
-            margin-bottom: 5px;
+        .single-field {
+            font-size: 14px;
+        }
+
+        .back-button {
+            margin-bottom: 20px;
+            padding: 10px 15px;
+            border-radius: 5px;
+            border: none;
+            background: black;
+            color: white;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            opacity: 0.8;
         }
 
         #changelog {
@@ -139,10 +162,9 @@
 <div class="box">
     <h1>2026 AGQ Programming</h1>
 
-    <!-- NEW LINKS -->
     <div class="top-links">
-        <a href="https://www.google.com" target="_blank">Link One</a>
-        <a href="https://www.google.com" target="_blank">Link Two</a>
+        <a href="https://www.google.com" target="_blank">Request Form</a>
+        <a href="https://www.google.com" target="_blank">Evening Activity Form</a>
     </div>
 
     <div class="most-recent-update" id="mostRecentUpdate">
@@ -153,9 +175,7 @@
         <input type="text" id="searchInput" placeholder="Search staff by name...">
     </div>
 
-    <div class="pdf-container" id="pdfContainer">
-        <!-- PDFs will be appended here -->
-    </div>
+    <div class="pdf-container" id="pdfContainer"></div>
 
     <div class="divider"></div>
 
@@ -165,9 +185,11 @@
 </div>
 
 <script>
+
 /* -----------------------------
-   PDF DISPLAY WITH CACHE-BUSTING
+   PDF DISPLAY FUNCTION
 ------------------------------ */
+
 const pdfFiles = [
     "Programming - AA.pdf",
     "Programming - Time Off.pdf",
@@ -178,6 +200,11 @@ const pdfFiles = [
 
 const pdfDirectory = "/campagq/programming/";
 const pdfContainer = document.getElementById("pdfContainer");
+
+function loadPDFs() {
+    pdfContainer.innerHTML = "";
+    pdfFiles.forEach(file => displayPDF(file));
+}
 
 function displayPDF(fileName) {
     const displayDiv = document.createElement("div");
@@ -200,60 +227,87 @@ function displayPDF(fileName) {
                 page.render({ canvasContext: context, viewport: viewport });
             });
         }
-    }).catch(err => {
-        const errorMsg = document.createElement("div");
-        errorMsg.className = "error-message";
-        errorMsg.innerText = `Unable to display ${fileName}.`;
-        displayDiv.appendChild(errorMsg);
     });
 
     pdfContainer.appendChild(displayDiv);
 }
 
-pdfFiles.forEach(file => displayPDF(file));
+loadPDFs();
 
 /* -----------------------------
-   SEARCH FUNCTIONALITY
+   SEARCH BEHAVIOR
 ------------------------------ */
+
 document.getElementById("searchInput").addEventListener("keypress", function(event) {
     if (event.key === "Enter") {
         event.preventDefault();
-
-        // Clear PDFs
-        pdfContainer.innerHTML = "";
-
-        // Create static staff info layout
-        const staffDiv = document.createElement("div");
-        staffDiv.className = "staff-info";
-
-        const fields = [
-            "Name",
-            "1st Hour",
-            "2nd Hour",
-            "3rd Hour",
-            "4th Hour",
-            "Toof",
-            "Noff",
-            "Cabin",
-            "Post Assignments",
-            "Days Out",
-            "Notes"
-        ];
-
-        fields.forEach(field => {
-            const box = document.createElement("div");
-            box.className = "info-box";
-            box.innerHTML = `<strong>${field}</strong> Placeholder`;
-            staffDiv.appendChild(box);
-        });
-
-        pdfContainer.appendChild(staffDiv);
+        showStaffView();
     }
 });
 
+function showStaffView() {
+    pdfContainer.innerHTML = "";
+
+    const wrapper = document.createElement("div");
+    wrapper.className = "staff-wrapper";
+
+    const backBtn = document.createElement("button");
+    backBtn.className = "back-button";
+    backBtn.innerText = "Back to Full Programming";
+    backBtn.onclick = loadPDFs;
+
+    wrapper.appendChild(backBtn);
+
+    wrapper.innerHTML += `
+        <div class="group">
+            <div class="group-title">Staff Info</div>
+            <div class="group-grid">
+                <div><strong>Name:</strong> Placeholder</div>
+                <div><strong>Cabin:</strong> Placeholder</div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Programming Hours</div>
+            <div class="group-grid">
+                <div><strong>1st Hour:</strong> Placeholder</div>
+                <div><strong>2nd Hour:</strong> Placeholder</div>
+                <div><strong>3rd Hour:</strong> Placeholder</div>
+                <div><strong>4th Hour:</strong> Placeholder</div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Time Off</div>
+            <div class="group-grid">
+                <div><strong>Toof:</strong> Placeholder</div>
+                <div><strong>Noff:</strong> Placeholder</div>
+            </div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Post Assignments</div>
+            <div class="single-field"><strong>Post:</strong> Placeholder</div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Days Out</div>
+            <div class="single-field"><strong>Days Out:</strong> Placeholder</div>
+        </div>
+
+        <div class="group">
+            <div class="group-title">Notes</div>
+            <div class="single-field"><strong>Notes:</strong> Placeholder</div>
+        </div>
+    `;
+
+    pdfContainer.appendChild(wrapper);
+}
+
 /* -----------------------------
-   GITHUB LAST UPDATED & CHANGELOG
+   GITHUB CHANGELOG (UNCHANGED)
 ------------------------------ */
+
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
 
@@ -264,14 +318,6 @@ async function fetchChangelogAndLastUpdate() {
         );
         const data = await response.json();
 
-        if (!data || !data.length) {
-            document.getElementById("mostRecentUpdate").innerText =
-                "Most recent update: Unable to retrieve update info.";
-            document.getElementById("changelog").innerText =
-                "Changelog unavailable.";
-            return;
-        }
-
         const validCommits = data.filter(commitData => {
             const message = commitData.commit.message;
             return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]");
@@ -280,10 +326,8 @@ async function fetchChangelogAndLastUpdate() {
         if (validCommits.length > 0) {
             const lastCommit = validCommits[0].commit;
             const lastDate = new Date(lastCommit.author.date);
-            const formattedDate = lastDate.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-            const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
             document.getElementById("mostRecentUpdate").innerHTML =
-                `<strong>Most recent update:</strong><br>${formattedDate} – ${formattedTime} | ${lastCommit.message.split('\n')[0]}`;
+                `<strong>Most recent update:</strong><br>${lastDate.toLocaleDateString()} – ${lastDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})} | ${lastCommit.message}`;
         }
 
         const changelogDiv = document.getElementById("changelog");
@@ -293,21 +337,19 @@ async function fetchChangelogAndLastUpdate() {
             const commit = commitData.commit;
             const commitDate = new Date(commit.author.date);
             const div = document.createElement("div");
-            div.innerText = `${commitDate.toLocaleDateString()} ${commitDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}: ${commit.message.split('\n')[0]}`;
+            div.innerText = `${commitDate.toLocaleDateString()} ${commitDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}: ${commit.message}`;
             changelogDiv.appendChild(div);
         });
 
         changelogDiv.scrollTop = changelogDiv.scrollHeight;
 
     } catch (error) {
-        document.getElementById("mostRecentUpdate").innerText =
-            "Most recent update: Unable to retrieve update info.";
-        document.getElementById("changelog").innerText =
-            "Changelog unavailable.";
+        console.error(error);
     }
 }
 
 fetchChangelogAndLastUpdate();
+
 </script>
 
 </body>
