@@ -173,11 +173,9 @@ function displayPDF(fileName) {
 
 pdfFiles.forEach(file => displayPDF(file));
 
-
 /* -----------------------------
    GITHUB LAST UPDATED & CHANGELOG
 ------------------------------ */
-
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
 const filePath = "campagq/programming/";
@@ -207,11 +205,11 @@ async function fetchChangelogAndLastUpdate() {
         document.getElementById("mostRecentUpdate").innerText =
             `Most recent update:\n${formattedDate} – ${formattedTime} | ${lastCommit.message}`;
 
-        // Mini changelog at bottom
+        // Mini changelog at bottom (scrollable, newest at bottom)
         const changelogDiv = document.getElementById("changelog");
-        changelogDiv.innerHTML = ""; // clear
+        changelogDiv.innerHTML = "";
 
-        // Reverse chronological: newest at bottom, scroll starts at bottom
+        // Reverse data so newest commit is at the bottom
         data.reverse().forEach(commitData => {
             const commit = commitData.commit;
             const commitDate = new Date(commit.author.date);
@@ -220,7 +218,7 @@ async function fetchChangelogAndLastUpdate() {
             changelogDiv.appendChild(div);
         });
 
-        // Scroll to bottom
+        // Scroll to bottom so newest commit is visible
         changelogDiv.scrollTop = changelogDiv.scrollHeight;
 
     } catch (error) {
