@@ -196,13 +196,24 @@ async function fetchChangelogAndLastUpdate() {
             return;
         }
 
+        // Filter out merge commits and [IGNORE] commits
+        const validCommits = data.filter(commitData => {
+            const message = commitData.commit.message;
+            return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]");
+        });
+
         // Most recent update (top)
-        const lastCommit = data[0].commit;
-        const lastDate = new Date(lastCommit.author.date);
-        const formattedDate = lastDate.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
-        const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
-        document.getElementById("mostRecentUpdate").innerHTML =
-            `Most recent update:<br>${formattedDate} – ${formattedTime} | ${lastCommit.message}`;
+        if (validCommits.length > 0) {
+            const lastCommit = validCommits[0].commit;
+            const lastDate = new Date(lastCommit.author.date);
+            const formattedDate = lastDate.toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" });
+            const formattedTime = lastDate.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+            document.getElementById("mostRecentUpdate").innerHTML =
+                `Most recent update:<br>${formattedDate} – ${formattedTime} | ${lastCommit.message.split('\n')[0]}`;
+        } else {
+            document.getElementById("mostRecentUpdate").innerText =
+                "Most recent update: No valid commits found.";
+        }
 
         // Mini changelog (bottom)
         const changelogDiv = document.getElementById("changelog");
@@ -211,10 +222,8 @@ async function fetchChangelogAndLastUpdate() {
         changelogDiv.style.overflowY = "auto";
 
         // Show all commits up to 100 (reverse so newest is at bottom)
-        data.reverse().forEach(commitData => {
+        validCommits.reverse().forEach(commitData => {
             const commit = commitData.commit;
-            if (commit.message.startsWith("Merge branch")) return;
-            if (commit.message.startsWith("[IGNORE]")) return;
             const commitDate = new Date(commit.author.date);
             const div = document.createElement("div");
             div.innerText = `${commitDate.toLocaleDateString()} ${commitDate.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}: ${commit.message.split('\n')[0]}`;
