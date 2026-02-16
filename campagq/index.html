@@ -129,11 +129,11 @@
 ------------------------------ */
 // Updated PDF order
 const pdfFiles = [
-    "aa.pdf",
-    "time-off.pdf",
-    "post.pdf",
-    "in-out.pdf",
-    "cabins.pdf"
+    "Programming - AA.pdf",
+    "Programming - Time Off.pdf",
+    "Programming - Post.pdf",
+    "Programming - In-Out.pdf",
+    "Programming - Cabins.pdf"
 ];
 
 const pdfDirectory = "/campagq/programming/";
@@ -145,7 +145,7 @@ function displayPDF(fileName) {
 
     // Cache-busting query string
     const cacheBuster = "?t=" + new Date().getTime();
-    const pdfPath = pdfDirectory + fileName + cacheBuster;
+    const pdfPath = pdfDirectory + encodeURIComponent(fileName) + cacheBuster;
 
     const loadingTask = pdfjsLib.getDocument(pdfPath);
 
