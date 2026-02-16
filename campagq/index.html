@@ -254,11 +254,12 @@ function showStaffView() {
     const backBtn = document.createElement("button");
     backBtn.className = "back-button";
     backBtn.innerText = "Back to Full Programming";
-    backBtn.onclick = loadPDFs;
+    backBtn.addEventListener("click", loadPDFs);
 
     wrapper.appendChild(backBtn);
 
-    wrapper.innerHTML += `
+    const content = document.createElement("div");
+    content.innerHTML = `
         <div class="group">
             <div class="group-title">Staff Info</div>
             <div class="group-grid">
@@ -301,6 +302,7 @@ function showStaffView() {
         </div>
     `;
 
+    wrapper.appendChild(content);
     pdfContainer.appendChild(wrapper);
 }
 
