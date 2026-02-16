@@ -127,12 +127,13 @@
 /* -----------------------------
    PDF DISPLAY WITH CACHE-BUSTING
 ------------------------------ */
+// Updated PDF order
 const pdfFiles = [
     "aa.pdf",
-    "cabins.pdf",
     "time-off.pdf",
+    "post.pdf",
     "in-out.pdf",
-    "post.pdf"
+    "cabins.pdf"
 ];
 
 const pdfDirectory = "/campagq/programming/";
@@ -182,7 +183,6 @@ const filePath = "campagq/programming/";
 
 async function fetchChangelogAndLastUpdate() {
     try {
-        // Fetch last 100 commits on main branch
         const response = await fetch(
             `https://api.github.com/repos/${owner}/${repo}/commits?sha=main&per_page=100`
         );
