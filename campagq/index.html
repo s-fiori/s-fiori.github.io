@@ -253,8 +253,11 @@ function showStaffView() {
 
     const backBtn = document.createElement("button");
     backBtn.className = "back-button";
-    backBtn.innerText = "Back to Full Programming";
-    backBtn.addEventListener("click", loadPDFs);
+    backBtn.innerText = "Back to Programming";
+    backBtn.addEventListener("click", function() {
+        document.getElementById("searchInput").value = "";
+        loadPDFs();
+    });
 
     wrapper.appendChild(backBtn);
 
