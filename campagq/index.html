@@ -155,6 +155,33 @@
             color: red;
             font-size: 14px;
         }
+
+        .search-container {
+            position: relative;
+        }
+        
+        #searchSuggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .suggestion:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -173,6 +200,7 @@
 
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="Search staff by name...">
+        <div id="searchSuggestions"></div>
     </div>
 
     <div class="pdf-container" id="pdfContainer"></div>
@@ -202,6 +230,7 @@ const pdfDirectory = "/campagq/programming/";
 const pdfContainer = document.getElementById("pdfContainer");
 
 let staffData = [];
+const suggestionsDiv = document.getElementById("searchSuggestions");
 
 async function loadStaffCSV() {
     try {
@@ -229,6 +258,53 @@ async function loadStaffCSV() {
     } catch (error) {
         console.error("Failed to load staff CSV:", error);
     }
+}
+
+function updateSuggestions(searchTerm) {
+
+    if (!searchTerm) {
+        suggestionsDiv.style.display = "none";
+        suggestionsDiv.innerHTML = "";
+        return;
+    }
+
+    const matches = staffData.filter(person => {
+
+        const fullName =
+            `${person.firstName} ${person.lastName}`.toLowerCase();
+
+        return fullName.includes(searchTerm.toLowerCase());
+
+    }).slice(0, 10);
+
+    if (matches.length === 0) {
+        suggestionsDiv.style.display = "none";
+        return;
+    }
+
+    suggestionsDiv.innerHTML = "";
+
+    matches.forEach(person => {
+
+        const fullName = `${person.firstName} ${person.lastName}`;
+
+        const div = document.createElement("div");
+        div.className = "suggestion";
+        div.textContent = `${fullName} (Cabin ${person.cabin})`;
+
+        div.addEventListener("click", () => {
+
+            document.getElementById("searchInput").value = fullName;
+
+            suggestionsDiv.style.display = "none";
+
+            showStaffView(person);
+        });
+
+        suggestionsDiv.appendChild(div);
+    });
+
+    suggestionsDiv.style.display = "block";
 }
 
 function loadPDFs() {
@@ -264,6 +340,9 @@ function displayPDF(fileName) {
 
 loadPDFs();
 loadStaffCSV();
+document.getElementById("searchInput").addEventListener("input", function() {
+    updateSuggestions(this.value.trim());
+});
 
 /* -----------------------------
    SEARCH BEHAVIOR
@@ -281,9 +360,14 @@ document.getElementById("searchInput").addEventListener("keypress", function(eve
         .trim()
         .toLowerCase();
 
-    const staff = staffData.find(person =>
-        `${person.firstName} ${person.lastName}`.toLowerCase() === searchTerm
-    );
+    const staff = staffData.find(person => {
+
+        const fullName =
+            `${person.firstName} ${person.lastName}`.toLowerCase();
+    
+        return fullName.includes(searchTerm);
+    
+    });
 
     showStaffView(staff);
 });
@@ -367,6 +451,14 @@ function showStaffView(staff) {
 
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
+
+document.addEventListener("click", function(event) {
+
+    if (!event.target.closest(".search-container")) {
+        suggestionsDiv.style.display = "none";
+    }
+
+});
 
 async function fetchChangelogAndLastUpdate() {
     try {
