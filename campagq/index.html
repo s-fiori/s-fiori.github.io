@@ -408,7 +408,7 @@ function showStaffView(staff) {
         </div>
 
         <div class="group">
-            <div class="group-title">Programming Hours</div>
+            <div class="group-title">Activity Area Hours</div>
             <div class="group-grid">
                 <div><strong>1st Hour:</strong> ${staff.firstHour}</div>
                 <div><strong>3rd Hour:</strong> ${staff.thirdHour}</div>
@@ -418,7 +418,7 @@ function showStaffView(staff) {
         </div>
 
         <div class="group">
-            <div class="group-title">Time Off</div>
+            <div class="group-title">Time Off (WIP)</div>
             <div class="group-grid">
                 <div><strong>Toof:</strong> Placeholder</div>
                 <div><strong>Noff:</strong> Placeholder</div>
@@ -426,17 +426,17 @@ function showStaffView(staff) {
         </div>
 
         <div class="group">
-            <div class="group-title">Post Assignments</div>
+            <div class="group-title">Post Assignments (WIP)</div>
             <div class="single-field"><strong>Post:</strong> Placeholder</div>
         </div>
 
         <div class="group">
-            <div class="group-title">Days Out</div>
+            <div class="group-title">Days Out (WIP)</div>
             <div class="single-field"><strong>Days Out:</strong> Placeholder</div>
         </div>
 
         <div class="group">
-            <div class="group-title">Notes</div>
+            <div class="group-title">Notes (WIP)</div>
             <div class="single-field"><strong>Notes:</strong> Placeholder</div>
         </div>
     `;
@@ -469,7 +469,7 @@ async function fetchChangelogAndLastUpdate() {
 
         const validCommits = data.filter(commitData => {
             const message = commitData.commit.message;
-            return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]");
+            return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]") && !message.startsWith("Initial commit");
         });
 
         if (validCommits.length > 0) {
