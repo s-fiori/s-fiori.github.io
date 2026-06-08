@@ -155,6 +155,33 @@
             color: red;
             font-size: 14px;
         }
+
+        .search-container {
+            position: relative;
+        }
+        
+        #searchSuggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ccc;
+            border-top: none;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .suggestion {
+            padding: 10px;
+            cursor: pointer;
+        }
+        
+        .suggestion:hover {
+            background: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -163,8 +190,8 @@
     <h1>2026 AGQ Programming</h1>
 
     <div class="top-links">
-        <a href="https://www.google.com" target="_blank">Request Form</a>
-        <a href="https://www.google.com" target="_blank">Evening Activity Form</a>
+        <a href="https://forms.gle/9t9uhYaFVY7tsnnUA" target="_blank">Request Form</a>
+        <a href="https://www.google.com" target="_blank">All Day Activity Form</a>
     </div>
 
     <div class="most-recent-update" id="mostRecentUpdate">
@@ -173,6 +200,7 @@
 
     <div class="search-container">
         <input type="text" id="searchInput" placeholder="Search staff by name...">
+        <div id="searchSuggestions"></div>
     </div>
 
     <div class="pdf-container" id="pdfContainer"></div>
@@ -200,6 +228,84 @@ const pdfFiles = [
 
 const pdfDirectory = "/campagq/programming/";
 const pdfContainer = document.getElementById("pdfContainer");
+
+let staffData = [];
+const suggestionsDiv = document.getElementById("searchSuggestions");
+
+async function loadStaffCSV() {
+    try {
+        const response = await fetch("/campagq/csv/staff.csv");
+        const csvText = await response.text();
+
+        const rows = csvText.trim().split("\n");
+
+        staffData = rows.slice(1).map(row => {
+            const cols = row.split(",");
+
+            return {
+                firstName: cols[0]?.trim() || "",
+                lastName: cols[1]?.trim() || "",
+                cabin: cols[2]?.trim() || "",
+                firstHour: cols[3]?.trim() || "",
+                secondHour: cols[4]?.trim() || "",
+                thirdHour: cols[5]?.trim() || "",
+                fourthHour: cols[6]?.trim() || ""
+            };
+        });
+
+        console.log("Staff CSV loaded:", staffData);
+
+    } catch (error) {
+        console.error("Failed to load staff CSV:", error);
+    }
+}
+
+function updateSuggestions(searchTerm) {
+
+    if (!searchTerm) {
+        suggestionsDiv.style.display = "none";
+        suggestionsDiv.innerHTML = "";
+        return;
+    }
+
+    const matches = staffData.filter(person => {
+
+        const fullName =
+            `${person.firstName} ${person.lastName}`.toLowerCase();
+
+        return fullName.includes(searchTerm.toLowerCase());
+
+    }).slice(0, 10);
+
+    if (matches.length === 0) {
+        suggestionsDiv.style.display = "none";
+        return;
+    }
+
+    suggestionsDiv.innerHTML = "";
+
+    matches.forEach(person => {
+
+        const fullName = `${person.firstName} ${person.lastName}`;
+
+        const div = document.createElement("div");
+        div.className = "suggestion";
+        div.textContent = `${fullName} (Cabin ${person.cabin})`;
+
+        div.addEventListener("click", () => {
+
+            document.getElementById("searchInput").value = fullName;
+
+            suggestionsDiv.style.display = "none";
+
+            showStaffView(person);
+        });
+
+        suggestionsDiv.appendChild(div);
+    });
+
+    suggestionsDiv.style.display = "block";
+}
 
 function loadPDFs() {
     pdfContainer.innerHTML = "";
@@ -233,19 +339,49 @@ function displayPDF(fileName) {
 }
 
 loadPDFs();
+loadStaffCSV();
+document.getElementById("searchInput").addEventListener("input", function() {
+    updateSuggestions(this.value.trim());
+});
 
 /* -----------------------------
    SEARCH BEHAVIOR
 ------------------------------ */
 
 document.getElementById("searchInput").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        showStaffView();
-    }
+
+    if (event.key !== "Enter") return;
+
+    event.preventDefault();
+
+    const searchTerm = document
+        .getElementById("searchInput")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const staff = staffData.find(person => {
+
+        const fullName =
+            `${person.firstName} ${person.lastName}`.toLowerCase();
+    
+        return fullName.includes(searchTerm);
+    
+    });
+
+    showStaffView(staff);
 });
 
-function showStaffView() {
+function showStaffView(staff) {
+        if (!staff) {
+        pdfContainer.innerHTML = `
+            <div class="error-message">
+                Staff member not found.
+            </div>
+        `;
+        return;
+    }
+    
     pdfContainer.innerHTML = "";
 
     const wrapper = document.createElement("div");
@@ -266,23 +402,23 @@ function showStaffView() {
         <div class="group">
             <div class="group-title">Staff Info</div>
             <div class="group-grid">
-                <div><strong>Name:</strong> Placeholder</div>
-                <div><strong>Cabin:</strong> Placeholder</div>
+                <div><strong>Name:</strong> ${staff.firstName} ${staff.lastName}</div>
+                <div><strong>Cabin:</strong> ${staff.cabin}</div>
             </div>
         </div>
 
         <div class="group">
-            <div class="group-title">Programming Hours</div>
+            <div class="group-title">Activity Area Hours</div>
             <div class="group-grid">
-                <div><strong>1st Hour:</strong> Placeholder</div>
-                <div><strong>2nd Hour:</strong> Placeholder</div>
-                <div><strong>3rd Hour:</strong> Placeholder</div>
-                <div><strong>4th Hour:</strong> Placeholder</div>
+                <div><strong>1st Hour:</strong> ${staff.firstHour}</div>
+                <div><strong>3rd Hour:</strong> ${staff.thirdHour}</div>
+                <div><strong>2nd Hour:</strong> ${staff.secondHour}</div>
+                <div><strong>4th Hour:</strong> ${staff.fourthHour}</div>
             </div>
         </div>
 
         <div class="group">
-            <div class="group-title">Time Off</div>
+            <div class="group-title">Time Off (WIP)</div>
             <div class="group-grid">
                 <div><strong>Toof:</strong> Placeholder</div>
                 <div><strong>Noff:</strong> Placeholder</div>
@@ -290,17 +426,17 @@ function showStaffView() {
         </div>
 
         <div class="group">
-            <div class="group-title">Post Assignments</div>
+            <div class="group-title">Post Assignments (WIP)</div>
             <div class="single-field"><strong>Post:</strong> Placeholder</div>
         </div>
 
         <div class="group">
-            <div class="group-title">Days Out</div>
+            <div class="group-title">Days Out (WIP)</div>
             <div class="single-field"><strong>Days Out:</strong> Placeholder</div>
         </div>
 
         <div class="group">
-            <div class="group-title">Notes</div>
+            <div class="group-title">Notes (WIP)</div>
             <div class="single-field"><strong>Notes:</strong> Placeholder</div>
         </div>
     `;
@@ -316,6 +452,14 @@ function showStaffView() {
 const owner = "s-fiori";
 const repo = "s-fiori.github.io";
 
+document.addEventListener("click", function(event) {
+
+    if (!event.target.closest(".search-container")) {
+        suggestionsDiv.style.display = "none";
+    }
+
+});
+
 async function fetchChangelogAndLastUpdate() {
     try {
         const response = await fetch(
@@ -325,7 +469,7 @@ async function fetchChangelogAndLastUpdate() {
 
         const validCommits = data.filter(commitData => {
             const message = commitData.commit.message;
-            return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]");
+            return !message.startsWith("Merge branch") && !message.startsWith("[IGNORE]") && !message.startsWith("Initial commit");
         });
 
         if (validCommits.length > 0) {
