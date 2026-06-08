@@ -201,6 +201,36 @@ const pdfFiles = [
 const pdfDirectory = "/campagq/programming/";
 const pdfContainer = document.getElementById("pdfContainer");
 
+let staffData = [];
+
+async function loadStaffCSV() {
+    try {
+        const response = await fetch("/campagq/csv/staff.csv");
+        const csvText = await response.text();
+
+        const rows = csvText.trim().split("\n");
+
+        staffData = rows.slice(1).map(row => {
+            const cols = row.split(",");
+
+            return {
+                firstName: cols[0]?.trim() || "",
+                lastName: cols[1]?.trim() || "",
+                cabin: cols[2]?.trim() || "",
+                firstHour: cols[3]?.trim() || "",
+                secondHour: cols[4]?.trim() || "",
+                thirdHour: cols[5]?.trim() || "",
+                fourthHour: cols[6]?.trim() || ""
+            };
+        });
+
+        console.log("Staff CSV loaded:", staffData);
+
+    } catch (error) {
+        console.error("Failed to load staff CSV:", error);
+    }
+}
+
 function loadPDFs() {
     pdfContainer.innerHTML = "";
     pdfFiles.forEach(file => displayPDF(file));
@@ -233,19 +263,41 @@ function displayPDF(fileName) {
 }
 
 loadPDFs();
+loadStaffCSV();
 
 /* -----------------------------
    SEARCH BEHAVIOR
 ------------------------------ */
 
 document.getElementById("searchInput").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        showStaffView();
-    }
+
+    if (event.key !== "Enter") return;
+
+    event.preventDefault();
+
+    const searchTerm = document
+        .getElementById("searchInput")
+        .value
+        .trim()
+        .toLowerCase();
+
+    const staff = staffData.find(person =>
+        `${person.firstName} ${person.lastName}`.toLowerCase() === searchTerm
+    );
+
+    showStaffView(staff);
 });
 
-function showStaffView() {
+function showStaffView(staff) {
+        if (!staff) {
+        pdfContainer.innerHTML = `
+            <div class="error-message">
+                Staff member not found.
+            </div>
+        `;
+        return;
+    }
+    
     pdfContainer.innerHTML = "";
 
     const wrapper = document.createElement("div");
@@ -266,18 +318,18 @@ function showStaffView() {
         <div class="group">
             <div class="group-title">Staff Info</div>
             <div class="group-grid">
-                <div><strong>Name:</strong> Placeholder</div>
-                <div><strong>Cabin:</strong> Placeholder</div>
+                <div><strong>Name:</strong> ${staff.firstName} ${staff.lastName}</div>
+                <div><strong>Cabin:</strong> ${staff.cabin}</div>
             </div>
         </div>
 
         <div class="group">
             <div class="group-title">Programming Hours</div>
             <div class="group-grid">
-                <div><strong>1st Hour:</strong> Placeholder</div>
-                <div><strong>2nd Hour:</strong> Placeholder</div>
-                <div><strong>3rd Hour:</strong> Placeholder</div>
-                <div><strong>4th Hour:</strong> Placeholder</div>
+                <div><strong>1st Hour:</strong> ${staff.firstHour}</div>
+                <div><strong>2nd Hour:</strong> ${staff.secondHour}</div>
+                <div><strong>3rd Hour:</strong> ${staff.thirdHour}</div>
+                <div><strong>4th Hour:</strong> ${staff.fourthHour}</div>
             </div>
         </div>
 
