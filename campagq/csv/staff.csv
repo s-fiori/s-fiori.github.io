@@ -1,4 +1,68 @@
 first_name,last_name,cabin,first_hour,second_hour,third_hour,fourth_hour
-John,Smith,7,Archery,Swimming,Sailing,Crafts
-Jane,Doe,12,Tennis,Riflery,Swimming,Nature
-Bob,Jones,4,Sailing,Archery,Crafts,Swimming
+Abby,Bowers,1,News/Lib,C&G,Planning,Wood
+Brook,Fagan,1,Swim,Swim,Swim,Swim
+Marissa,Marsomething,2,Landsports,Health Flex,FUNK,C&G
+Eloise,MacDougald,2,Wood,Archery,News/Lib,C&G
+Nimeh,Awad,3,FUNK,C&G,Barn,Barn
+Vara,Smith,3,Archery,Wood,Wall,Wall
+Margaret,Lowsewski,4,FUNK,FUNK,FUNK,FUNK
+Gummy,,4,Drama & Music and Movement,Star,Kitchen,Kitchen
+Riley,Rubenstein,5,Barn,Barn,Planning,News/Lib
+Kendra,Ionknow,5,Wood,Wood,Wood,Wood
+Soph,J-Staff,5,Wall,Wall,Archery,Wood
+Matayia,Newbern,6,A&C,Planning,Wall,Wall
+Elsa,Pasquariello,6,Barn,Barn,A&C,Planning
+Sarita,Gankin,7,Planning,Archery,Sail,Sail
+Lydia,Strazewski,7,Wood,Wood,Wood,Wood
+Julianna,J-Staff,7,Archery,Star,Canoe,Swim
+Chiara,Bichakjian,8,Health Flex,Planning,News/Lib,A&C
+Greta,Thunberg,8,Swim,Canoe,H20 Ski,H20 Ski
+Maja,J-Staff,8,FUNK,C&G,News/Lib,Archery
+Anne,Kollman,9,H20 Ski,H20 Ski,Planning,Swim
+Alina,Juzcjyk,9,H20 Ski,H20 Ski,H20 Ski,H20 Ski
+Cece,J-Staff,9,FUNK,A&C,Wall,Wall
+Val,Von-Rutte,10,Canoe,Swim,Camper Board,Planning
+Mya,Stillonknow,10,A&C,A&C,A&C,A&C
+Vivien,J-Staff,10,Star,Drama & Music and Movement,Landsports,Archery
+Sadie,Barber,11,Drama & Music and Movement,Planning,Canoe,Swim
+Iseul,Something,11,Landsports,Landsports,Landsports,Landsports
+Molly,Page,12,Star,Star,Kitchen,Kitchen
+Abbie,Morischenelli,12,Drama & Music and Movement,Drama & Music and Movement,Archery,C&G
+Fina,Kutcher,12,Kitchen,Kitchen,Landsports,FUNK
+Heather,J-Staff,12,C&G,Swim,Swim,Canoe
+Helena,Myler,13,Swim,Swim,Sail,Sail
+Claire,Lewis,13,News/Lib,News/Lib,News/Lib,News/Lib
+Annaclare,J-Staff,13,News/Lib,A&C,FUNK,C&G
+Paul,Kollman,14,C&G,Planning,Wood,A&C
+Marcus,Ummmmm,14,Landsports,FUNK,Archery,News/Lib
+Eli,J-Staff,7,A&C,FUNK,C&G,News/Lib
+Ezra,Miler,15,Planning,Landsports,OST MT,OST MT
+Elias,Planet,15,Kitchen,Kitchen,Kitchen,Kitchen
+Gabriel,J-Staff,15,Landsports,Archery,News/Lib,FUNK
+Ted,Bundy,16,Wall,Wall,Wall,Wall
+Charlie,Rosenfeld,16,FUNK,FUNK,FUNK,FUNK
+Marc,J-Staff,14,Star,Canoe,Sail,Sail
+Grey,Earl,17,Wall,Wall,Landsports,Planning
+Eliam,Elias,17,Wall,Wall,C&G,Archery
+Sekou,J-Staff,17,Archery,News/Lib,Landsports,A&C
+Davis,Gibbs,18,OST MT,OST MT,Camper Board,Planning
+Dom,Franklin,18,Star,News/Lib,A&C,Archery
+Micah,Oops,18,A&C,Drama & Music and Movement,C&G,FUNK
+Brent,Ceccaci,19,Kitchen,Kitchen,Planning,Landsports
+Felix,Atkins,19,Canoe,A&C,Sail,Sail
+Fynn,J-Staff,19,Drama & Music and Movement,Star,Wood,Landsports
+Miles,McDonald,20,Planning,C&G,Kitchen,Kitchen
+Oliver,Germano,20,Kitchen,Kitchen,A&C,Landsports
+John,Whatisit,20,OST MT,OST MT,Archery,C&G
+Alex,J-Staff,20,Swim,Wood,Swim,News/Lib
+Santi,Fiori,21,H20 Flex,H20 Flex,H20 Flex,H20 Flex
+Lincoln,Somethingortheother,21,OST MT,OST MT,C&G,Landsports
+Leo,Wyrot,22,Barn,Barn,Barn,Barn
+Noah,Southside,22,C&G,Drama & Music and Movement,OST MT,OST MT
+Rome,McCoy,YC,News/Lib,Planning,Barn,Barn
+Finlay,Archery,YC,Archery,Archery,Archery,Archery
+Salim,Poopy,GC,Wood,Landsports,Planning,Planning
+Gabe,Sanborn,GC,Canoe,Canoe,Canoe,Canoe
+Murphy,Hammer,Director's Cabin,N/A,N/A,N/A,N/A
+Cate,Dombrowski,Lodge,N/A,N/A,N/A,N/A
+KC,CK,Director's Cabin,N/A,N/A,N/A,N/A
